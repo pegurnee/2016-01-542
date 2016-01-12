@@ -24,9 +24,11 @@ class Interpreter
     else:
       return False
 
-  def _is_token_num_or_id(self, _token=self._token):
-    
-    pass
+  def _is_token_id_or_num(self, _token=self._token):
+    if self._is_token_id(_token) or self._is_token_num(_token):
+      return True
+    else:
+      return False
 
   def _match(self, expected):
     if expected == self._token:
@@ -47,26 +49,18 @@ class Interpreter
     pass
 
   def program(self):
-    if self._token in ['read', 'write', '$$']:
+    if self._token in ['read', 'write', '$$'] or self._is_token_id():
       self._stmt_list()
       self._match('$$')
-    elif self._is_token_id():
-      self._stmt_list()
-      self._match('$$')
-      pass
     else:
       return parse_error
 
   def _stmt_list(self):
     if self._token == '$$':
       self._skip()
-    elif self._token in ['read', 'write']:
+    elif self._token in ['read', 'write'] or self._is_token_id():
       self._stmt()
       self._stmt_list()
-    elif self._is_token_id():
-      self._stmt()
-      self._stmt_list()
-      pass
     else:
       return parse_error
 
@@ -85,13 +79,7 @@ class Interpreter
       return parse_error
 
   def _expr(self):
-    if self._token == '(':
-      self._term()
-      self._term_tail()
-    elif self._is_token_id():
-      self._term()
-      self._term_tail()
-    elif self._is_token_num():
+    if self._token == '(' or self._is_token_id_or_num():
       self._term()
       self._term_tail()
     else:
@@ -102,21 +90,13 @@ class Interpreter
       self._add_op()
       self._term()
       self._term_tail()
-    elif self._token in [')', 'read', 'write', '$$']:
-      self._skip()
-    elif self._is_token_id():
+    elif self._token in [')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
       return parse_error
 
   def _term(self):
-    if self._token == '(':
-      self._factor()
-      self._factor_tail()
-    elif self._is_token_id():
-      self._factor()
-      self._factor_tail()
-    elif self._is_token_num():
+    if self._token == '(' or self._is_token_id_or_num():
       self._factor()
       self._factor_tail()
     else:
@@ -127,9 +107,7 @@ class Interpreter
       self._mult_op()
       self._factor()
       self._factor_tail()
-    elif self._token in ['+', '-', ')', 'read', 'write', '$$']:
-      self._skip()
-    elif self._is_token_id():
+    elif self._token in ['+', '-', ')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
       return parse_error
