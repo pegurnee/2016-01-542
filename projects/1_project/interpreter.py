@@ -1,3 +1,5 @@
+from parse_error import ParseError
+
 class Interpreter:
 
   def __init__(self, code_string):
@@ -15,16 +17,15 @@ class Interpreter:
 
   def interpret(self, code_string=None):
     if code_string is None:
-      code_string = 'totall unneeded'
+      code_string = 'totally unneeded'
     self.consume()
-    if self.program():
-      print('all good')
-    else:
-      print('fml');
+    self.program()
+
+    print('all good')
 
   def _is_token_id(self, _id=None):
     if _id is None:
-      _id=self._token
+      _id = self._token
     if _id.isalpha() and _id not in self._KEYWORDS:
       return True
     else:
@@ -32,7 +33,7 @@ class Interpreter:
 
   def _is_token_num(self, _num=None):
     if _num is None:
-      _num=self._token
+      _num = self._token
     if _num.isdigit():
       return True
     else:
@@ -40,18 +41,18 @@ class Interpreter:
 
   def _is_token_id_or_num(self, _token=None):
     if _token is None:
-      _token=self._token
+      _token = self._token
     if self._is_token_id(_token) or self._is_token_num(_token):
       return True
     else:
       return False
 
   def _match(self, expected):
-    #TODO: might conflict with id's named 'id' or 'number'
+    # TODO: might conflict with id's named 'id' or 'number'
     if expected == self._token or expected in ['id', 'number']:
       self.consume(self._token)
     else:
-      return parse_error
+      raise ParseError('token')
 
   def consume(self, _nomable=None):
     if _nomable == '$$':
@@ -72,7 +73,7 @@ class Interpreter:
       self._stmt_list()
       self._match('$$')
     else:
-      return parse_error
+      raise ParseError('program')
 
   def _stmt_list(self):
     if self._token == '$$':
@@ -81,7 +82,7 @@ class Interpreter:
       self._stmt()
       self._stmt_list()
     else:
-      return parse_error
+      raise ParseError('stmt_list')
 
   def _stmt(self):
     if self._token == 'read':
@@ -95,14 +96,14 @@ class Interpreter:
       self._match(':=')
       self._expr()
     else:
-      return parse_error
+      raise ParseError('stmt')
 
   def _expr(self):
     if self._token == '(' or self._is_token_id_or_num():
       self._term()
       self._term_tail()
     else:
-      return parse_error
+      raise ParseError('expr')
 
   def _term_tail(self):
     if self._token in ['+', '-']:
@@ -112,14 +113,14 @@ class Interpreter:
     elif self._token in [')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
-      return parse_error
+      raise ParseError('term_tail')
 
   def _term(self):
     if self._token == '(' or self._is_token_id_or_num():
       self._factor()
       self._factor_tail()
     else:
-      return parse_error
+      raise ParseError('term')
 
   def _factor_tail(self):
     if self._token in ['*', '/']:
@@ -129,7 +130,7 @@ class Interpreter:
     elif self._token in ['+', '-', ')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
-      return parse_error
+      raise ParseError('factor_tail')
 
   def _factor(self):
     if self._token == '(':
@@ -141,7 +142,7 @@ class Interpreter:
     elif self._is_token_num():
       self._match('number')
     else:
-      return parse_error
+      raise ParseError('factor')
 
   def _add_op(self):
     if self._token == '+':
@@ -149,7 +150,7 @@ class Interpreter:
     elif self._token == '-':
       self._match('-')
     else:
-      return parse_error
+      raise ParseError('add_op')
 
   def _mult_op(self):
     if self._token == '*':
@@ -157,8 +158,14 @@ class Interpreter:
     elif self._token == '/':
       self._match('/')
     else:
-      return parse_error
+      raise ParseError('mult_op')
 
 if __name__ == "__main__":
-  test = Interpreter("read a\na := 3\nwrite ( a + 3 ) - b * 4\n$$")
-  test.interpret()
+  # test = Interpreter("read a\na := 3\nwrite () a + 3 ) - b * 4\n$$")
+  test = Interpreter("read a\na := 2\nb := ( 4\n$$")
+  import traceback
+  try:
+    test.interpret()
+  except ParseError as e:
+    print('Invalid at %s because of %s' % (e.location(), test._token))
+    traceback.print_exc()
