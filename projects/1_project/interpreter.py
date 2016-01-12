@@ -31,12 +31,13 @@ class Interpreter
       return False
 
   def _match(self, expected):
-    if expected == self._token:
+    #TODO: might conflict with id's named 'id' or 'number'
+    if expected == self._token or expected in ['id', 'number']:
       self.consume(self._token)
     else:
       return parse_error
 
-  def consume(self, arg):
+  def consume(self, _nomable):
     if not self._tokens:
       return True
     elif not self._tokens[0]:
