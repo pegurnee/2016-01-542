@@ -1,4 +1,4 @@
-class Interpreter
+class Interpreter:
 
   def __init__(self, code_string):
     self._KEYWORDS = ['read', 'write']
@@ -9,22 +9,38 @@ class Interpreter
     # Split code by lines, then split lines by white space into tokens
     lines = code_string.splitlines()
     for x in range(len(lines)):
+      self._tokens.append([])
       for token in lines[x].split():
         self._tokens[x].append(token)
 
-  def _is_token_id(self, _id=self._token):
+  def interpret(self, code_string=None):
+    if code_string is None:
+      code_string = 'totall unneeded'
+    self.consume()
+    if self.program():
+      print('all good')
+    else:
+      print('fml');
+
+  def _is_token_id(self, _id=None):
+    if _id is None:
+      _id=self._token
     if _id.isalpha() and _id not in self._KEYWORDS:
       return True
     else:
       return False
 
-  def _is_token_num(self, _num=self._token):
+  def _is_token_num(self, _num=None):
+    if _num is None:
+      _num=self._token
     if _num.isdigit():
       return True
     else:
       return False
 
-  def _is_token_id_or_num(self, _token=self._token):
+  def _is_token_id_or_num(self, _token=None):
+    if _token is None:
+      _token=self._token
     if self._is_token_id(_token) or self._is_token_num(_token):
       return True
     else:
@@ -37,7 +53,9 @@ class Interpreter
     else:
       return parse_error
 
-  def consume(self, _nomable):
+  def consume(self, _nomable=None):
+    if _nomable == '$$':
+      return True
     if not self._tokens:
       return True
     elif not self._tokens[0]:
@@ -140,3 +158,7 @@ class Interpreter
       self._match('/')
     else:
       return parse_error
+
+if __name__ == "__main__":
+  test = Interpreter("read a\na := 3\nwrite ( a + 3 ) - b * 4\n$$")
+  test.interpret()
