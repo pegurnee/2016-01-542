@@ -38,17 +38,14 @@ class Tokenizer:
       return True
 
   def _get_token(self, code_string):
-    a = code_string.find(' ')
-    b = code_string.find('\n')
-    if a < 0:
-      a = b
-    if b < 0:
-      b = a
-    index = a if a < b else b
-    if index < 0:
-      index = len(code_string)
+    token_loc = 1
+    while token_loc < len(code_string):
+      if code_string[token_loc] in self._SAVERS or code_string[token_loc] in self._NOSAVE:
+        break
+      else:
+        token_loc += 1
 
-    return code_string[:index], code_string[index + 1:]
+    return code_string[:token_loc], code_string[token_loc + 1:]
 
   def append(self, code_string):
     self._tokenize(code_string)
