@@ -20,8 +20,14 @@ class Tokenizer:
     string_content = code_string
 
     while self._has_token(string_content):
-      token, string_content = self._get_token(string_content)
-      self._tokens.append(token)
+      multiple, token, string_content = self._get_token(string_content)
+      if token:
+        if multiple:
+          for the_token in token:
+            if the_token:
+              self._tokens.append(the_token)
+        else:
+          self._tokens.append(token)
     '''
     # Split code by lines, then split lines by white space into tokens
     lines = code_string.splitlines()
@@ -38,14 +44,18 @@ class Tokenizer:
       return True
 
   def _get_token(self, code_string):
-    token_loc = 1
+    token_loc = 0
     while token_loc < len(code_string):
-      if code_string[token_loc] in self._SAVERS or code_string[token_loc] in self._NOSAVE:
+      if code_string[token_loc] in self._NOSAVE:
         break
       else:
-        token_loc += 1
-
-    return code_string[:token_loc], code_string[token_loc + 1:]
+        curr_string = code_string[:token_loc + 1]
+        for saver in self._SAVERS:
+          if curr_string[-len(saver):] == saver:
+            return True, [curr_string[:-len(saver)], curr_string[-len(saver):]], code_string[token_loc + 1:]
+        else:
+          token_loc += 1
+    return False, code_string[:token_loc], code_string[token_loc + 1:]
 
   def append(self, code_string):
     self._tokenize(code_string)
