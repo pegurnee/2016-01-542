@@ -7,6 +7,12 @@ class Tokenizer:
 
     self._tokenize(code_string)
 
+  def __iter__(self):
+    return self
+
+  def __next__(self):
+    return self.next()
+
   def _tokenize(self, code_string):
     # Split code by lines, then split lines by white space into tokens
     lines = code_string.splitlines()
