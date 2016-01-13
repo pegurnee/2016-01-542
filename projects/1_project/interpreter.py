@@ -1,4 +1,5 @@
 from parse_error import ParseError
+from tokenizer import Tokenizer
 
 class Interpreter:
 
@@ -6,22 +7,23 @@ class Interpreter:
     self._KEYWORDS = ['read', 'write']
 
     self._token = None
-    self._tokens = []
 
-    # Split code by lines, then split lines by white space into tokens
-    lines = code_string.splitlines()
-    for x in range(len(lines)):
-      self._tokens.append([])
-      for token in lines[x].split():
-        self._tokens[x].append(token)
+    self._tokenizer = Tokenizer(code_string)
 
   def interpret(self, code_string=None):
     if code_string is None:
       code_string = 'totally unneeded'
-    self.consume()
+    self._consume()
     self.program()
 
-    print('all good')
+  def _consume(self, _nomable=None):
+    if _nomable == '$$':
+      return True
+    #if self._tokenizer.is_empty():
+    #  return True
+
+    # TODO: add current token to AST
+    self._token = self._tokenizer.next()
 
   def _is_token_id(self, _id=None):
     if _id is None:
@@ -50,20 +52,9 @@ class Interpreter:
   def _match(self, expected):
     # TODO: might conflict with id's named 'id' or 'number'
     if expected == self._token or expected in ['id', 'number']:
-      self.consume(self._token)
+      self._consume(self._token)
     else:
       raise ParseError('token')
-
-  def consume(self, _nomable=None):
-    if _nomable == '$$':
-      return True
-    if not self._tokens:
-      return True
-    elif not self._tokens[0]:
-      self._tokens.pop(0)
-
-    # TODO: add current token to AST
-    self._token = self._tokens[0].pop(0)
 
   def _skip(self):
     pass
@@ -161,11 +152,13 @@ class Interpreter:
       raise ParseError('mult_op')
 
 if __name__ == "__main__":
-  # test = Interpreter("read a\na := 3\nwrite () a + 3 ) - b * 4\n$$")
-  test = Interpreter("read a\na := 2\nb := ( 4\n$$")
+  #test = Interpreter("read a\na := 3\nwrite ( a + 3 ) - b * 4\n$$")
+  test = Interpreter("read a\na := 2\nb := ( 4\nwrite \n$$")
+  #test = Interpreter("a := 2\n$$")
   import traceback
   try:
     test.interpret()
+    print('success')
   except ParseError as e:
     print('Invalid at %s because of %s' % (e.location(), test._token))
     traceback.print_exc()
