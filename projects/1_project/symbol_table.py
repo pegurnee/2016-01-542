@@ -32,3 +32,9 @@ class SymbolTable:
       if key == label:
         return self._table[key]
     return False
+
+  def has(self, label):
+    if label in self._table.keys():
+      return True
+    else:
+      return False

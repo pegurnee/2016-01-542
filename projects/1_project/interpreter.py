@@ -1,5 +1,6 @@
-from parse_error import ParseError
-from tokenizer import Tokenizer
+from parse_error  import ParseError
+from tokenizer    import Tokenizer
+from symbol_table import SymbolTable
 
 class Interpreter:
 
@@ -9,6 +10,7 @@ class Interpreter:
     self._token = None
 
     self._tokenizer = Tokenizer(code_string, ['+','-','/','*','(',')',':='], ['\n',' '])
+    self._symboltable = SymbolTable()
 
   def interpret(self, code_string=None):
     if code_string is None:
@@ -19,16 +21,19 @@ class Interpreter:
   def _consume(self, _nomable=None):
     if _nomable == '$$':
       return True
-    #if self._tokenizer.is_empty():
-    #  return True
 
+    if _nomable == 'id':
+      self._symboltable.add(self._token, 'theoretically a line number')
     # TODO: add current token to AST
     self._token = self._tokenizer.next()
 
   def _is_token_id(self, _id=None):
     if _id is None:
       _id = self._token
-    if _id.isalpha() and _id not in self._KEYWORDS:
+
+    if self._symboltable.has(_id):
+      return True
+    elif _id.isalpha() and _id not in self._KEYWORDS:
       return True
     else:
       return False
