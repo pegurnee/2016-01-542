@@ -28,14 +28,6 @@ class Tokenizer:
               self._tokens.append(the_token)
         else:
           self._tokens.append(token)
-    '''
-    # Split code by lines, then split lines by white space into tokens
-    lines = code_string.splitlines()
-    for x in range(len(lines)):
-      self._tokens.append([])
-      for token in lines[x].split():
-        self._tokens[x].append(token)
-    '''
 
   def _has_token(self, code_string):
     if not code_string:
