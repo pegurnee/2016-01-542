@@ -8,7 +8,7 @@ class Interpreter:
 
     self._token = None
 
-    self._tokenizer = Tokenizer(code_string)
+    self._tokenizer = Tokenizer(code_string, ['+','-','/','*','(',')',':='], ['\n',' '])
 
   def interpret(self, code_string=None):
     if code_string is None:
@@ -152,11 +152,12 @@ class Interpreter:
       raise ParseError('mult_op')
 
 if __name__ == "__main__":
-  #test = Interpreter("read a\na := 3\nwrite ( a + 3 ) - b * 4\n$$")
-  test = Interpreter("read a\na := 2\nb := ( 4\nwrite \n$$")
-  #test = Interpreter("a := 2\n$$")
+  test = Interpreter("read a\na := 3\nwrite (a + 3) - b * 4\n$$")
+  #test = Interpreter("read a\na := 2\nb := ( 4\nwrite \n$$")
+  #test = Interpreter("a := 2\n$$\n")
   import traceback
   try:
+    print(test._tokenizer._tokens)
     test.interpret()
     print('success')
   except ParseError as e:
