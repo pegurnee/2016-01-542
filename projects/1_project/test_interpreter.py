@@ -17,7 +17,7 @@ def main():
 
   interpreter = Interpreter()
   for _test in _tests:
-    print('interpret: %s' % _test)
+    print('interpret: \n%s' % _test)
     try:
       interpreter.interpret(_test)
       print('success')

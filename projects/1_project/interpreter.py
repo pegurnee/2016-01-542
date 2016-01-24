@@ -1,6 +1,8 @@
-from parse_error  import ParseError
-from tokenizer    import Tokenizer
-from symbol_table import SymbolTable
+from parse_error    import ParseError
+from token_error    import TokenError
+from compiler_error import CompilerError
+from tokenizer      import Tokenizer
+from symbol_table   import SymbolTable
 
 class Interpreter:
 
@@ -60,7 +62,7 @@ class Interpreter:
     if expected == self._token or expected in ['id', 'number']:
       self._consume(self._token)
     else:
-      raise ParseError('token')
+      raise TokenError(self._token, expected)
 
   def _skip(self):
     pass
@@ -166,6 +168,6 @@ if __name__ == "__main__":
     print(test._tokenizer._tokens)
     test.interpret()
     print('success')
-  except ParseError as e:
+  except CompilerError as e:
     print('Invalid at %s because of %s' % (e.location(), test._token))
     traceback.print_exc()

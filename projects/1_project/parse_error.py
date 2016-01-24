@@ -1,6 +1,4 @@
-class ParseError(Exception):
-  def __init__(self, error_loc):
-    self._error_loc = error_loc
+from compiler_error import CompilerError
 
-  def location(self):
-    return self._error_loc
+class ParseError(CompilerError):
+  pass
