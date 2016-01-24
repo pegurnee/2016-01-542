@@ -1,37 +1,22 @@
-from interpreter import Interpreter
-from parse_error import ParseError
+from interpreter  import Interpreter
+from parse_error  import ParseError
+
+from os           import walk
+
 
 def main():
-  tests = ["""
-    a := 3
-    b := a + 2
-    write b
-    $$
-    """
-  , """
-    a := 2
-    3 := 3
-    $$
-    """
-  , """
-    read a
-    a := 3 + (2
-    write a
-    $$
-    """
-  , """
-    a:= 2
-    b := a % 3
-    write a
-    $$
-    """
-  ]
+  _tests  = []
+  _fnames = []
+  for (_, _, filenames) in walk('test_cases'):
+    _fnames.extend(filenames)
+    break
 
-  with open('test_cases/a.calc') as f:
-    tests.append(f.read())
-    
+  for filename in _fnames:
+    with open('test_cases/' + filename) as f:
+      _tests.append(f.read())
+
   interpreter = Interpreter()
-  for _test in tests:
+  for _test in _tests:
     print('interpret: %s' % _test)
     try:
       interpreter.interpret(_test)
