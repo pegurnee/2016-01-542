@@ -25,8 +25,11 @@ def main():
     write a
     $$
     """
-    ]
+  ]
 
+  with open('test_cases/a.calc') as f:
+    tests.append(f.read())
+    
   interpreter = Interpreter()
   for _test in tests:
     print('interpret: %s' % _test)
