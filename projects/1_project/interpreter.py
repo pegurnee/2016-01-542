@@ -31,6 +31,9 @@ class Interpreter:
     self._token = self._tokenizer.next()
 
   def _is_token_id(self, _id=None):
+    if self._token is None:
+      raise ParseError('unexpected EOF')
+
     if _id is None:
       _id = self._token
 
@@ -42,6 +45,9 @@ class Interpreter:
       return False
 
   def _is_token_num(self, _num=None):
+    if self._token is None:
+      raise ParseError('unexpected EOF')
+
     if _num is None:
       _num = self._token
     if _num.isdigit():

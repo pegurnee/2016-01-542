@@ -53,6 +53,8 @@ class Tokenizer:
     self._tokenize(code_string)
 
   def next(self):
+    if not self._tokens:
+      return None
     if not self._tokens[0]:
       self._tokens.pop(0)
 
