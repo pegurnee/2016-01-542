@@ -4,7 +4,7 @@ from symbol_table import SymbolTable
 
 class Interpreter:
 
-  def __init__(self, code_string):
+  def __init__(self, code_string=None):
     self._KEYWORDS = ['read', 'write']
 
     self._token = None
@@ -13,8 +13,9 @@ class Interpreter:
     self._symboltable = SymbolTable()
 
   def interpret(self, code_string=None):
-    if code_string is None:
-      code_string = 'totally unneeded'
+    if code_string is not None:
+      self._tokenizer.append(code_string)
+
     self._consume()
     self.program()
 
