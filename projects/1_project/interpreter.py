@@ -10,9 +10,15 @@ class Interpreter:
     self._KEYWORDS = ['read', 'write']
 
     self._token = None
+    self._line = 0
 
     self._tokenizer = Tokenizer(code_string, ['+','-','/','*','(',')',':='], ['\n',' '])
     self._symboltable = SymbolTable()
+
+  def reset(self):
+    self._line = 0
+    self._token = None
+    self._tokenizer.clear()
 
   def interpret(self, code_string=None):
     if code_string is not None:
@@ -23,16 +29,17 @@ class Interpreter:
 
   def _consume(self, _nomable=None):
     if _nomable == '$$':
+      self.reset()
       return True
 
     if _nomable == 'id':
-      self._symboltable.add(self._token, 'theoretically a line number')
+      self._symboltable.add(self._token, self._line)
     # TODO: add current token to AST
     self._token = self._tokenizer.next()
 
   def _is_token_id(self, _id=None):
     if self._token is None:
-      raise ParseError('unexpected EOF')
+      raise ParseError(self._line, 'unexpected EOF')
 
     if _id is None:
       _id = self._token
@@ -46,7 +53,7 @@ class Interpreter:
 
   def _is_token_num(self, _num=None):
     if self._token is None:
-      raise ParseError('unexpected EOF')
+      raise ParseError(self._line, 'unexpected EOF')
 
     if _num is None:
       _num = self._token
@@ -68,7 +75,7 @@ class Interpreter:
     if expected == self._token or expected in ['id', 'number']:
       self._consume(self._token)
     else:
-      raise TokenError(self._token, expected)
+      raise TokenError(self._line, self._token, expected)
 
   def _skip(self):
     pass
@@ -78,16 +85,17 @@ class Interpreter:
       self._stmt_list()
       self._match('$$')
     else:
-      raise ParseError('program')
+      raise ParseError(self._line, 'program')
 
   def _stmt_list(self):
     if self._token == '$$':
       self._skip()
     elif self._token in ['read', 'write'] or self._is_token_id():
+      self._line += 1
       self._stmt()
       self._stmt_list()
     else:
-      raise ParseError('stmt_list')
+      raise ParseError(self._line, 'stmt_list')
 
   def _stmt(self):
     if self._token == 'read':
@@ -101,14 +109,14 @@ class Interpreter:
       self._match(':=')
       self._expr()
     else:
-      raise ParseError('stmt')
+      raise ParseError(self._line, 'stmt')
 
   def _expr(self):
     if self._token == '(' or self._is_token_id_or_num():
       self._term()
       self._term_tail()
     else:
-      raise ParseError('expr')
+      raise ParseError(self._line, 'expr')
 
   def _term_tail(self):
     if self._token in ['+', '-']:
@@ -118,14 +126,14 @@ class Interpreter:
     elif self._token in [')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
-      raise ParseError('term_tail')
+      raise ParseError(self._line, 'term_tail')
 
   def _term(self):
     if self._token == '(' or self._is_token_id_or_num():
       self._factor()
       self._factor_tail()
     else:
-      raise ParseError('term')
+      raise ParseError(self._line, 'term')
 
   def _factor_tail(self):
     if self._token in ['*', '/']:
@@ -135,7 +143,7 @@ class Interpreter:
     elif self._token in ['+', '-', ')', 'read', 'write', '$$'] or self._is_token_id():
       self._skip()
     else:
-      raise ParseError('factor_tail')
+      raise ParseError(self._line, 'factor_tail')
 
   def _factor(self):
     if self._token == '(':
@@ -147,7 +155,7 @@ class Interpreter:
     elif self._is_token_num():
       self._match('number')
     else:
-      raise ParseError('factor')
+      raise ParseError(self._line, 'factor')
 
   def _add_op(self):
     if self._token == '+':
@@ -155,7 +163,7 @@ class Interpreter:
     elif self._token == '-':
       self._match('-')
     else:
-      raise ParseError('add_op')
+      raise ParseError(self._line, 'add_op')
 
   def _mult_op(self):
     if self._token == '*':
@@ -163,7 +171,7 @@ class Interpreter:
     elif self._token == '/':
       self._match('/')
     else:
-      raise ParseError('mult_op')
+      raise ParseError(self._line, 'mult_op')
 
 if __name__ == "__main__":
   test = Interpreter("read a\na := 3\nwrite (a + 3) - b * 4\n$$")
@@ -175,5 +183,5 @@ if __name__ == "__main__":
     test.interpret()
     print('success')
   except CompilerError as e:
-    print('Invalid at %s because of %s' % (e.location(), test._token))
+    print('Invalid at %s because of %s at line %s' % (e.location(), test._token, test._line))
     traceback.print_exc()

@@ -64,3 +64,6 @@ class Tokenizer:
     if not self._tokens:
       return True
     return False
+
+  def clear(self):
+    self._tokens = []
