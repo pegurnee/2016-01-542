@@ -1,0 +1,50 @@
+9. ClockNoise language
+  G  -> CN
+  CN -> CN tick tock
+     -> tick tock
+a. LR(1) items
+  [G->*CN, $]
+  [G->CN*, $]
+
+  [CN->*CN tick tock, $]  [CN->*CN tick tock, tick]
+  [CN->CN *tick tock, $]  [CN->CN *tick tock, tick]
+  [CN->CN tick *tock, $]  [CN->CN tick *tock, tick]
+  [CN->CN tick tock*, $]  [CN->CN tick tock*, tick]
+
+  [CN->*tick tock, $]     [CN->*tick tock, tick]
+  [CN->tick *tock, $]     [CN->tick *tock, tick]
+  [CN->tick tock*, $]     [CN->tick tock*, tick]
+
+b. FIRST sets of ClockNoise
+  FIRST(G)    = {tick}
+  FIRST(GN)   = {tick}
+  FIRST(tick) = {tick}
+  FIRST(tock) = {tock}
+
+c. Canonical Collection of ClockNoise LR(1) items
+
+d. Derive Action/Goto tables
+
+10.
+  Start -> S
+      S -> Aa
+      A -> BC
+         | BCf
+      B -> b
+      C -> c
+a. Canonical collection of LR(1) items
+  Start -> *S
+      S -> *Aa
+      A -> *BC
+      A -> *BCf
+      B -> *b
+      C -> *c
+
+  
+b. Derive Action/Goto tables
+c. Is grammar LR(1)?
+
+11. Robot arm, > puts apple, < takes apple, bag is empty
+  no apple can be taken from an empty bag
+a. Write a LR(1) grammar to represent options
+  S -> >S<S | >S | e
