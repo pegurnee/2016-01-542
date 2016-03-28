@@ -1,7 +1,20 @@
 class SymbolTable:
 
   def __init__(self):
+    self.scope_number = 0
     self._table = {}
+
+  def initialize_scope(self):
+    pass
+
+  def finalize_scope(self):
+    pass
+
+  def lookup(self, name):
+    pass
+
+  def insert(self, name, type, name_and_level_of_parent, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
+    pass
 
   def add(self, label, address):
     if label in self._table.keys():
