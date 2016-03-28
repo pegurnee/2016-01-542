@@ -5,13 +5,15 @@ class SymbolTable:
     self._table = {}
 
   def initialize_scope(self):
-    pass
+    self.scope_number += 1
 
   def finalize_scope(self):
-    pass
+    self.scope_number -= 1
 
   def lookup(self, name):
-    pass
+    if name in self._table.keys():
+      return self._table[name]
+    return False
 
   def insert(self, name, type, name_and_level_of_parent, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
     pass
