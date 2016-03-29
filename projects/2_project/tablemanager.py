@@ -46,6 +46,7 @@ class TableManager:
 
 if __name__ == '__main__':
   man = TableManager()
-  with open('test_cases/p257.c') as f:
+  with open('test_cases/p253.c') as f:
     for line in f:
       man.parse_line(line)
+  print(man.table)

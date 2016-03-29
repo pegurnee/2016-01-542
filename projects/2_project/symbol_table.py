@@ -15,8 +15,8 @@ class SymbolTable:
       return self._table[name]
     return False
 
-  def insert(self, name, type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
-    pass
+  def insert(self, name, var_type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
+    self._table[name] = (var_type, self.scope_number, line_count)
 
   def add(self, label, address):
     if label in self._table.keys():
@@ -53,3 +53,6 @@ class SymbolTable:
       return True
     else:
       return False
+
+  def __str__(self):
+    return '\n'.join(['{}: {}'.format(k,v) for k,v in sorted(self._table.items())])
