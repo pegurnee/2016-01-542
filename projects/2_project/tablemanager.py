@@ -15,7 +15,7 @@ class TableManager:
     if not line.strip():
       return
 
-    if line.find('{'):
+    if '{' in line:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
 
@@ -35,18 +35,20 @@ class TableManager:
       if not self.table.lookup(word):
         self.table.insert(word, words[0] if words[0] != 'void' else 'function', self.line_count)
 
-    if '=' in line:
+    if '=' in line and '==' not in line:
       assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
 
-    if line.find('}'):
+    if '}' in line:
       self.table.finalize_scope()
       self.line_count = self.line_counts.pop()
 
     self.line_count += 1
 
 if __name__ == '__main__':
-  man = TableManager()
-  with open('test_cases/p253.c') as f:
-    for line in f:
-      man.parse_line(line)
-  print(man.table)
+  test_files = ['p253.c', 'p257.c', 'p267.c', 'p324.c']
+  for fname in test_files:
+    man = TableManager()
+    with open('test_cases/' + fname) as f:
+      for line in f:
+        man.parse_line(line)
+    print(man.table)
