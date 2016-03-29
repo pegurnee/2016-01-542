@@ -1,4 +1,5 @@
 from symbol_table import SymbolTable
+import ckeywords as ck
 
 class TableManager:
   def __init__(self):
@@ -9,15 +10,26 @@ class TableManager:
     self.line_count = 0
 
   def parse_line(self, line):
-    #here
     print(line)
+
     #ignore blank lines
     if not line.strip():
       return
 
+    #handle open brace work
     if '{' in line:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
+
+    if '(' in line and ';' not in line and line.split()[0] not in ck.flowkeys:
+      #function definitions are lines that have an open parens and don't have a semicolon AND the first token is not a flow of control keyword
+      line, params = line.split('(')
+      is_function = True
+      params = params.rstrip(' {)\n').split(',')
+
+      print(params)
+    else:
+      is_function = False
 
     words = line.split()
     if words[0] in ['void','int','char']:
@@ -38,6 +50,7 @@ class TableManager:
     if '=' in line and '==' not in line:
       assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
 
+    #handle close brace work
     if '}' in line:
       self.table.finalize_scope()
       self.line_count = self.line_counts.pop()
