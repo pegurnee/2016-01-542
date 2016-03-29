@@ -21,15 +21,16 @@ class TableManager:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
 
-    if '(' in line and ';' not in line and line.split()[0] not in ck.flowkeys:
-      #function definitions are lines that have an open parens and don't have a semicolon AND the first token is not a flow of control keyword
-      line, params = line.split('(')
-      is_function = True
-      params = params.rstrip(' {)\n').split(',')
-
-      print(params)
-    else:
-      is_function = False
+    #get parameters from functions
+    if '(' in line:
+      line = line.replace('(', ' ( ').replace(')', ' ) ')
+      if ';' not in line and line.split()[0] not in ck.flowkeys:
+        #function definitions are lines that have an open parens and don't have a semicolon AND the first token is not a flow of control keyword
+        line, params = line.split('(')
+        is_function = True
+        param_tokens = params.rstrip(' {)\n').split(',')
+      else:
+        is_function = False
 
     words = line.split()
     if words[0] in ['void','int','char']:
