@@ -46,7 +46,7 @@ class TableManager:
         head, tail = tail.split(maxsplit=1)
       if head in ['void','int','char']:
         for word in tail.split(','):
-          word = ''.join(c for c in word if c not in set(string.punctuation))
+          word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
           if not self.table.lookup(word) and word not in ck.keywords:
             self.table.insert(word.strip(), head if head != 'void' else 'function', self.line_count)
 
