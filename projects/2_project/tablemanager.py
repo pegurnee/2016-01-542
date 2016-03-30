@@ -21,7 +21,8 @@ class TableManager:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
 
-    #get parameters from functions
+    #determine if a function is defined and get parameters from functions
+    is_function = False
     if '(' in line:
       line = line.replace('(', ' ( ').replace(')', ' ) ')
       if ';' not in line and line.split()[0] not in ck.flowkeys:
@@ -29,24 +30,20 @@ class TableManager:
         line, params = line.split('(')
         is_function = True
         param_tokens = params.rstrip(' {)\n').split(',')
-      else:
-        is_function = False
 
-    words = line.split()
-    if words[0] in ['void','int','char']:
-      word = words[1]
-
-      pointer = False
-      more = False
-      if '*' in word:
-        word = word.replace('*', '')
+    #insert new labels into the table
+    if is_function or line.split()[0] in ['void', 'int', 'char' 'for']:
+      if '*' in line:
+        line = line.replace('*', '')
         pointer = True
-      if ',' in word:
-        word = word.replace(',', '')
-        more = True
+      else:
+        pointer = False
+      head, tail = line.split(maxsplit=1)
 
-      if not self.table.lookup(word):
-        self.table.insert(word, words[0] if words[0] != 'void' else 'function', self.line_count)
+      if head in ['void','int','char']:
+        for word in tail.split(','):
+          if not self.table.lookup(word) and word not in ck.keywords:
+            self.table.insert(word.strip(), head if head != 'void' else 'function', self.line_count)
 
     if '=' in line and '==' not in line:
       assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
