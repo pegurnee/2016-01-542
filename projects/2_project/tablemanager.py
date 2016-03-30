@@ -32,7 +32,7 @@ class TableManager:
         param_tokens = params.rstrip(' {)\n').split(',')
 
     #insert new labels into the table
-    if is_function or line.split()[0] in ['void', 'int', 'char' 'for']:
+    if is_function or line.split()[0] in ['void', 'int', 'char' 'for'] or line.split()[0] in ck.varmods:
       if '*' in line:
         line = line.replace('*', '')
         pointer = True

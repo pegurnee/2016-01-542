@@ -3,3 +3,4 @@ keywords = ['auto',
   'signed', 'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while']
 flowkeys = ['case', 'const', 'else', 'extern', 'for', 'goto', 'if', 'return', 'switch', 'union', 'while'
 ]
+varmods = ['auto', 'const', 'default', 'extern', 'register', 'signed', 'static', 'struct', 'typedef', 'unsigned', 'volatile']
