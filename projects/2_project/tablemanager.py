@@ -24,6 +24,7 @@ class TableManager:
     if '{' in line:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
+      self.scope_names.append(str(self.table.scope_number))
 
     #determine if a function is defined and get parameters from functions
     is_function = False
@@ -49,16 +50,17 @@ class TableManager:
       if head in ['void','int','char']:
         if is_function:
           word = tail.strip()
-          if not self.table.lookup(word) and word not in ck.keywords:
-            self.table.insert(word, 'function', self.line_count)
+          if not self.table.lookup((self.scope_names[-1], word)) and word not in ck.keywords:
+            self.table.insert(( self.scope_names[-1], word), 'function', self.line_count)
+            self.scope_names[-1] = word
 
           for declare in param_tokens:
             if not declare:
               continue
 
             declare = ''.join(c for c in declare if c not in set(string.punctuation)).split()
-            if not self.table.lookup(declare[1]) and declare[1] not in ck.keywords:
-              self.table.insert(declare[1], declare[0], self.line_count)
+            if not self.table.lookup((self.scope_names[-1], declare[1])) and declare[1] not in ck.keywords:
+              self.table.insert((self.scope_names[-1], declare[1]), declare[0], self.line_count)
         else:
           words = tail.split(',');
 
@@ -67,8 +69,8 @@ class TableManager:
               continue
 
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
-            if not self.table.lookup(word) and word not in ck.keywords:
-              self.table.insert(word.strip(), head, self.line_count)
+            if not self.table.lookup(( self.scope_names[-1], word)) and word not in ck.keywords:
+              self.table.insert(( self.scope_names[-1], word.strip()), head, self.line_count)
 
     if '=' in line and '==' not in line:
       assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
@@ -77,6 +79,7 @@ class TableManager:
     if '}' in line:
       self.table.finalize_scope()
       self.line_count = self.line_counts.pop()
+      self.scope_names.pop()
 
     self.line_count += 1
 
