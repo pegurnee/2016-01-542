@@ -1,6 +1,8 @@
 from symbol_table import SymbolTable
 import ckeywords as ck
 
+import string
+
 class TableManager:
   def __init__(self):
     super(TableManager, self).__init__()
@@ -40,8 +42,11 @@ class TableManager:
         pointer = False
       head, tail = line.split(maxsplit=1)
 
+      while head in ck.varmods:
+        head, tail = tail.split(maxsplit=1)
       if head in ['void','int','char']:
         for word in tail.split(','):
+          word = ''.join(c for c in word if c not in set(string.punctuation))
           if not self.table.lookup(word) and word not in ck.keywords:
             self.table.insert(word.strip(), head if head != 'void' else 'function', self.line_count)
 
@@ -63,3 +68,4 @@ if __name__ == '__main__':
       for line in f:
         man.parse_line(line)
     print(man.table)
+    print('=' * 40)
