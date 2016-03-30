@@ -11,6 +11,8 @@ class TableManager:
     self.line_counts = []
     self.line_count = 0
 
+    self.scope_names = ['global']
+
   def parse_line(self, line):
     print(line)
 
@@ -45,10 +47,28 @@ class TableManager:
       while head in ck.varmods:
         head, tail = tail.split(maxsplit=1)
       if head in ['void','int','char']:
-        for word in tail.split(','):
-          word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
+        if is_function:
+          word = tail.strip()
           if not self.table.lookup(word) and word not in ck.keywords:
-            self.table.insert(word.strip(), head if head != 'void' else 'function', self.line_count)
+            self.table.insert(word, 'function', self.line_count)
+
+          for declare in param_tokens:
+            if not declare:
+              continue
+
+            declare = ''.join(c for c in declare if c not in set(string.punctuation)).split()
+            if not self.table.lookup(declare[1]) and declare[1] not in ck.keywords:
+              self.table.insert(declare[1], declare[0], self.line_count)
+        else:
+          words = tail.split(',');
+
+          for word in words:
+            if not word:
+              continue
+
+            word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
+            if not self.table.lookup(word) and word not in ck.keywords:
+              self.table.insert(word.strip(), head, self.line_count)
 
     if '=' in line and '==' not in line:
       assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
