@@ -34,7 +34,7 @@ class TableManager:
         # AND the first token is not a flow of control keyword
         line, params = line.split('(')
         is_function = True
-        param_tokens = params.rstrip(' {)\n').split(',')
+        param_tokens = [x for x in params.rstrip(' {)\n').split(',') if x]
 
     #insert new labels into the table
     if is_function or line.split()[0] in ['void', 'int', 'char' 'for'] or line.split()[0] in ck.varmods:
@@ -61,20 +61,14 @@ class TableManager:
 
           #insert function parameters
           for declare in param_tokens:
-            if not declare:
-              continue
-
             declare = ''.join(c for c in declare if c not in set(string.punctuation)).split()
             if not self.table.lookup((self.scope_names[-1], declare[1])) and declare[1] not in ck.keywords:
               self.table.insert((self.scope_names[-1], declare[1]), declare[0], self.line_count)
         else:
-          words = tail.split(',');
+          words = [x for x in tail.split(',') if x];
 
           #insert the (possibly) comma-delimited set of declared variables
           for word in words:
-            if not word:
-              continue
-
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
             if not self.table.lookup(( self.scope_names[-1], word)) and word not in ck.keywords:
               self.table.insert(( self.scope_names[-1], word.strip()), head, self.line_count)

@@ -10,13 +10,13 @@ class SymbolTable:
   def finalize_scope(self):
     self.scope_number -= 1
 
-  def lookup(self, name):
-    if name in self._table.keys():
-      return self._table[name]
+  def lookup(self, location_and_name):
+    if location_and_name in self._table.keys():
+      return self._table[location_and_name]
     return False
 
-  def insert(self, name, var_type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
-    self._table[name] = (var_type, self.scope_number, line_count)
+  def insert(self, location_and_name, var_type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
+    self._table[location_and_name] = (var_type, self.scope_number, line_count)
 
   def add(self, label, address):
     if label in self._table.keys():
