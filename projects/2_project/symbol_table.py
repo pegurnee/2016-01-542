@@ -16,7 +16,11 @@ class SymbolTable:
     return False
 
   def insert(self, location_and_name, var_type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
-    self._table[location_and_name] = (var_type, self.scope_number, line_count)
+    _data = [var_type, self.scope_number, line_count]
+    if var_type == 'function':
+      _data.extend([num_parameters, parameter_name_and_type, return_type])
+
+    self._table[location_and_name] = tuple(_data)
 
   def add(self, label, address):
     if label in self._table.keys():
