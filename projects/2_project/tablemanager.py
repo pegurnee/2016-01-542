@@ -14,8 +14,6 @@ class TableManager:
     self.scope_names = ['global']
 
   def parse_line(self, line):
-    print(line)
-
     #ignore blank lines
     if not line.strip():
       return
@@ -31,13 +29,16 @@ class TableManager:
     if '(' in line:
       line = line.replace('(', ' ( ').replace(')', ' ) ')
       if ';' not in line and line.split()[0] not in ck.flowkeys:
-        #function definitions are lines that have an open parens and don't have a semicolon AND the first token is not a flow of control keyword
+        #function definitions are lines that have an open parens
+        # and don't have a semicolon
+        # AND the first token is not a flow of control keyword
         line, params = line.split('(')
         is_function = True
         param_tokens = params.rstrip(' {)\n').split(',')
 
     #insert new labels into the table
     if is_function or line.split()[0] in ['void', 'int', 'char' 'for'] or line.split()[0] in ck.varmods:
+      #handle pointer nonsense
       if '*' in line:
         line = line.replace('*', '')
         pointer = True
@@ -45,15 +46,20 @@ class TableManager:
         pointer = False
       head, tail = line.split(maxsplit=1)
 
+      #ignore any/all variable modifiers
       while head in ck.varmods:
         head, tail = tail.split(maxsplit=1)
+
+      #first token of var type
       if head in ['void','int','char']:
         if is_function:
+          #insert function name
           word = tail.strip()
           if not self.table.lookup((self.scope_names[-1], word)) and word not in ck.keywords:
             self.table.insert(( self.scope_names[-1], word), 'function', self.line_count)
             self.scope_names[-1] = word
 
+          #insert function parameters
           for declare in param_tokens:
             if not declare:
               continue
@@ -64,6 +70,7 @@ class TableManager:
         else:
           words = tail.split(',');
 
+          #insert the (possibly) comma-delimited set of declared variables
           for word in words:
             if not word:
               continue
@@ -71,9 +78,6 @@ class TableManager:
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
             if not self.table.lookup(( self.scope_names[-1], word)) and word not in ck.keywords:
               self.table.insert(( self.scope_names[-1], word.strip()), head, self.line_count)
-
-    if '=' in line and '==' not in line:
-      assign_stmt, value = tuple(map(lambda x: x.strip(), line.split('=')))
 
     #handle close brace work
     if '}' in line:
