@@ -13,6 +13,13 @@ class TableManager:
 
     self.scope_names = ['global']
 
+  #returns True is a record was successfully inserted into the symbol table
+  def _insert_one(self, label_name, var_type, **adds):
+    label_key = (self.scope_names[-1], label_name)
+    if not self.table.lookup(label_key) and label_name not in ck.keywords:
+      self.table.insert(label_key, var_type, self.line_count)
+      return True
+
   def parse_line(self, line):
     #ignore blank lines
     if not line.strip():
@@ -62,16 +69,16 @@ class TableManager:
           #insert function parameters
           for declare in param_tokens:
             declare = ''.join(c for c in declare if c not in set(string.punctuation)).split()
-            if not self.table.lookup((self.scope_names[-1], declare[1])) and declare[1] not in ck.keywords:
-              self.table.insert((self.scope_names[-1], declare[1]), declare[0], self.line_count)
+            if self._insert_one(declare[1], declare[0]):
+              pass
         else:
           words = [ x.strip() for x in tail.split(',') if x ];
 
           #insert the (possibly) comma-delimited set of declared variables
           for word in words:
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
-            if not self.table.lookup(( self.scope_names[-1], word)) and word not in ck.keywords:
-              self.table.insert(( self.scope_names[-1], word.strip()), head, self.line_count)
+            if self._insert_one(word, head):
+              pass
 
     #handle close brace work
     if '}' in line:
