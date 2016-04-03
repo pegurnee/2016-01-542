@@ -25,11 +25,20 @@ class TableManager:
     if not line.strip():
       return
 
-    #handle open brace work
+    #check if scope should be initialized or finalized, the line variable is going to be screwed with
     if '{' in line:
       self.table.initialize_scope()
       self.line_counts.append(self.line_count)
       self.scope_names.append(str(self.table.scope_number))
+
+      should_initialize = True
+    else:
+      should_initialize = False
+
+    if '}' in line:
+      should_finalize = True
+    else:
+      should_finalize = False
 
     #determine if a function is defined and get parameters from functions
     is_function = False
@@ -62,9 +71,16 @@ class TableManager:
         if is_function:
           #insert function name
           word = tail.strip()
-          if not self.table.lookup((self.scope_names[-1], word)) and word not in ck.keywords:
-            self.table.insert(( self.scope_names[-1], word), 'function', self.line_count, num_parameters=len(param_tokens), parameter_name_and_type=param_tokens, return_type=head)
-            self.scope_names[-1] = word
+
+          #if a scope was initialized this line, we need to use the correct name
+          if should_initialize:
+            real_scope_name = self.scope_names[-2]
+          else:
+            real_scope_name = self.scope_names[-1]
+
+          if not self.table.lookup(( real_scope_name, word)) and word not in ck.keywords:
+            self.table.insert(( real_scope_name, word), 'function', self.line_count, num_parameters=len(param_tokens), parameter_name_and_type=param_tokens, return_type=head)
+            self.scope_names[-1] = '{} - level {}'.format(word, self.scope_names[-1])
 
           #insert function parameters
           for declare in param_tokens:
@@ -81,7 +97,7 @@ class TableManager:
               pass
 
     #handle close brace work
-    if '}' in line:
+    if should_finalize:
       self.table.finalize_scope()
       self.line_count = self.line_counts.pop()
       self.scope_names.pop()
