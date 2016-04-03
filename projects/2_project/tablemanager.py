@@ -8,8 +8,7 @@ class TableManager:
     super(TableManager, self).__init__()
     self.table = SymbolTable()
 
-    self.line_counts = []
-    self.line_count = 0
+    self.line_counts = [0]
 
     self.scope_names = ['global']
 
@@ -17,7 +16,7 @@ class TableManager:
   def _insert_one(self, label_name, var_type, **adds):
     label_key = (self.scope_names[-1], label_name)
     if not self.table.lookup(label_key) and label_name not in ck.keywords:
-      self.table.insert(label_key, var_type, self.line_count)
+      self.table.insert(label_key, var_type, self.line_counts[-1])
       return True
 
   def parse_line(self, line):
@@ -28,7 +27,7 @@ class TableManager:
     #check if scope should be initialized or finalized, the line variable is going to be screwed with
     if '{' in line:
       self.table.initialize_scope()
-      self.line_counts.append(self.line_count)
+      self.line_counts.append(0)
       self.scope_names.append(str(self.table.scope_number))
 
       should_initialize = True
@@ -74,12 +73,12 @@ class TableManager:
 
           #if a scope was initialized this line, we need to use the correct name
           if should_initialize:
-            real_scope_name = self.scope_names[-2]
+            real_scope = -2
           else:
-            real_scope_name = self.scope_names[-1]
+            real_scope = -1
 
-          if not self.table.lookup(( real_scope_name, word)) and word not in ck.keywords:
-            self.table.insert(( real_scope_name, word), 'function', self.line_count, num_parameters=len(param_tokens), parameter_name_and_type=param_tokens, return_type=head)
+          if not self.table.lookup(( self.scope_names[real_scope], word)) and word not in ck.keywords:
+            self.table.insert(( self.scope_names[real_scope], word), 'function', self.line_counts[real_scope], num_parameters=len(param_tokens), parameter_name_and_type=param_tokens, return_type=head)
             self.scope_names[-1] = '{} - level {}'.format(word, self.scope_names[-1])
 
           #insert function parameters
@@ -99,10 +98,11 @@ class TableManager:
     #handle close brace work
     if should_finalize:
       self.table.finalize_scope()
-      self.line_count = self.line_counts.pop()
+      self.line_counts.pop()
       self.scope_names.pop()
 
-    self.line_count += 1
+    for i,c in enumerate(self.line_counts):
+      self.line_counts[i] += 1
 
 if __name__ == '__main__':
   test_files = ['p253.c', 'p257.c', 'p267.c', 'p324.c']
