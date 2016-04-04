@@ -79,15 +79,24 @@ class TableManager:
 
           if not self.table.lookup(( self.scope_names[real_scope], word)) and word not in ck.keywords:
             self.table.insert(( self.scope_names[real_scope], word), 'function', self.line_counts[real_scope], num_parameters=len(param_tokens), parameter_name_and_type=param_tokens, return_type=head)
-            self.scope_names[-1] = '{} - level {}'.format(word, self.scope_names[-1])
+            self.scope_names[-1] = '{} - level {}'.format(word, self.table.scope_number)
 
           #insert function parameters
           for declare in param_tokens:
-            declare = ''.join(c for c in declare if c not in set(string.punctuation)).split()
-            if self._insert_one(declare[1], declare[0]):
+            pointer = '*' in declare
+            
+            var_type, label_name = ''.join(c for c in declare if c not in set(string.punctuation)).split()
+            if pointer:
+              var_type += '*'
+
+            if self._insert_one(label_name, var_type):
               pass
         else:
           words = [ x.strip() for x in tail.split(',') if x ];
+
+          #become a pointer to the var
+          if pointer:
+            head += '*'
 
           #insert the (possibly) comma-delimited set of declared variables
           for word in words:
