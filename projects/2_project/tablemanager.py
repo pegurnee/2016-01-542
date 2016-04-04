@@ -84,7 +84,7 @@ class TableManager:
           #insert function parameters
           for declare in param_tokens:
             pointer = '*' in declare
-            
+
             var_type, label_name = ''.join(c for c in declare if c not in set(string.punctuation)).split()
             if pointer:
               var_type += '*'
@@ -113,6 +113,17 @@ class TableManager:
     for i,c in enumerate(self.line_counts):
       self.line_counts[i] += 1
 
+def main():
+  fname = input('enter file name: ')
+  with open('test_cases/' + fname) as f:
+    for line in f:
+      man.parse_line(line)
+
+  print('Your table is served:')
+  print('=' * 40)
+  print(man.table)
+  print('=' * 40)
+
 if __name__ == '__main__':
   test_files = ['p253.c', 'p257.c', 'p267.c', 'p324.c']
   for fname in test_files:
@@ -122,3 +133,5 @@ if __name__ == '__main__':
         man.parse_line(line)
     print(man.table)
     print('=' * 40)
+
+  main()
