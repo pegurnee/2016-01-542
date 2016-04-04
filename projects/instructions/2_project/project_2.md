@@ -41,29 +41,29 @@ project within the development will have points subtracted. (Note, this means th
 you use a GUI, you should instantiate the GUI from the command line)
 
 Symbol Table information
-1. For primitive variables:
-name
-type
-name and lexical level of declaring procedure  (level 0 can be “global”)
+1. For primitive variables:  
+name  
+type  
+name and lexical level of declaring procedure (level 0 can be “global”)  
 the line counter value where the variable was declared
-1. For function names:
-name
-each parameter’s name and type
-number of parameters
-return value type
+1. For function names:  
+name  
+each parameter’s name and type  
+number of parameters  
+return value type  
 the line counter value where the variable was declared
-1. For array variables:
-name
-type
-name and lexical level of declaring procedure
-number of dimensions
-upper bound of each dimension
-the line counter value where the variable was declared
-1. For pointers:
-name
-type (of the dereferenced pointer)
-name and lexical level of declaring procedure
-the line counter value where the variable was declared
+1. For array variables:  
+name  
+type  
+name and lexical level of declaring procedure  
+number of dimensions  
+upper bound of each dimension  
+the line counter value where the variable was declared  
+1. For pointers:  
+name  
+type (of the dereferenced pointer)  
+name and lexical level of declaring procedure  
+the line counter value where the variable was declared  
 
 Tests:
 - Use the C program p 257
