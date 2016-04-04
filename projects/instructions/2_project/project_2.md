@@ -40,41 +40,41 @@ including perl).
 project within the development will have points subtracted. (Note, this means that if
 you use a GUI, you should instantiate the GUI from the command line)
 
-Symbol Table information
-1. For primitive variables:  
-name  
-type  
-name and lexical level of declaring procedure (level 0 can be “global”)  
-the line counter value where the variable was declared
-1. For function names:  
-name  
-each parameter’s name and type  
-number of parameters  
-return value type  
-the line counter value where the variable was declared
-1. For array variables:  
-name  
-type  
-name and lexical level of declaring procedure  
-number of dimensions  
-upper bound of each dimension  
-the line counter value where the variable was declared  
-1. For pointers:  
-name  
-type (of the dereferenced pointer)  
-name and lexical level of declaring procedure  
-the line counter value where the variable was declared  
+#### Required Symbol Table information
+1. primitives:  
+  - name  
+  - type  
+  - name and lexical level of declaring procedure (level 0 can be “global”)  
+  - the line counter value where the variable was declared
+1. functions:  
+  - name  
+  - each parameter’s name and type  
+  - number of parameters  
+  - return value type  
+  - the line counter value where the variable was declared
+1. arrays:  
+  - name  
+  - type  
+  - name and lexical level of declaring procedure  
+  - number of dimensions  
+  - upper bound of each dimension  
+  - the line counter value where the variable was declared  
+1. pointers:  
+  - name  
+  - type (of the dereferenced pointer)  
+  - name and lexical level of declaring procedure  
+  - the line counter value where the variable was declared  
 
-Tests:
-- Use the C program p 257
+#### Tests:
+- Use the C program p257
 - I will produce a test program ASAP
 - You are responsible for exhaustively testing your code.
 
-Turn in
+#### Turn in
 - Hard copy of source code
 - Hard copy of test/execution results
 - I may ask for code walk thru and/or demo with on the fly modifications
 
-Grade based on
+#### Grade based on
 - Meeting specs
 - Code quality (elegance, readability)
