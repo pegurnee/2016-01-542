@@ -113,16 +113,5 @@ class TableManager:
     for i,c in enumerate(self.line_counts):
       self.line_counts[i] += 1
 
-def main():
-  fname = input('enter file name: ')
-  with open('test_cases/' + fname) as f:
-    for line in f:
-      man.parse_line(line)
-
-  print('Your table is served:')
-  print('=' * 40)
-  print(man.table)
-  print('=' * 40)
-
 if __name__ == '__main__':
-  main()
+  print('This is a tool to use, not a tool to run')
