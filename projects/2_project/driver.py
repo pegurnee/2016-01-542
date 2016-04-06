@@ -19,5 +19,8 @@ def main():
   print(man.table)
   print('=' * 40)
 
+  with open(outfile, 'w') as f:
+    f.write(str(man))
+
 if __name__ == '__main__':
   main()

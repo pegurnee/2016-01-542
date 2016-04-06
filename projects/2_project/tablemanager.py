@@ -14,6 +14,10 @@ class TableManager:
     if filename:
       self.load_file(filename)
 
+  def __str__(self):
+    artsy = '*' * 10
+    return '{} Symbol Table for {} {}\n{}'.format(artsy, self.filename, artsy, self.table)
+
   def load_file(self, filename):
     self.filename = filename
 
