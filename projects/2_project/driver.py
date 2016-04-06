@@ -1,10 +1,19 @@
-import os, sys
+import os, sys, getopt
 
 from tablemanager import TableManager
 
 def main():
-  fname = input('enter file name: ')
-  with open('test_cases/' + fname) as f:
+  if len(sys.argv) == 2:
+    infile = sys.argv[1]
+    outfile = sys.argv[1][ : sys.argv[1].rfind('.') + 1] + 'sym'
+  elif len(sys.argv) == 3:
+    infile = sys.argv[1]
+    outfile = sys.argv[2]
+  else:
+    infile = input('enter file name: ')
+
+  man = TableManager()
+  with open('test_cases/' + infile) as f:
     for line in f:
       man.parse_line(line)
 
