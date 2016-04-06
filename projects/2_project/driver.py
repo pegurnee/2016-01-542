@@ -12,10 +12,7 @@ def main():
   else:
     infile = input('enter file name: ')
 
-  man = TableManager()
-  with open('test_cases/' + infile) as f:
-    for line in f:
-      man.parse_line(line)
+  man = TableManager('test_cases/' + infile)
 
   print('Your table is served:')
   print('=' * 40)

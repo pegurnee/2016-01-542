@@ -4,13 +4,24 @@ import ckeywords as ck
 import string
 
 class TableManager:
-  def __init__(self):
+  def __init__(self, filename=None):
     super(TableManager, self).__init__()
     self.table = SymbolTable()
 
     self.line_counts = [0]
-
     self.scope_names = ['global']
+
+    if filename:
+      self.load_file(filename)
+
+  def load_file(self, filename):
+    self.filename = filename
+
+    with open(filename) as f:
+      for line in f:
+        self.parse_line(line)
+
+    return True
 
   #returns True is a record was successfully inserted into the symbol table
   def _insert_one(self, label_name, var_type, **adds):
