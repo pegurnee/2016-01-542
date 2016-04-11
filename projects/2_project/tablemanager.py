@@ -115,6 +115,20 @@ class TableManager:
 
           #insert the (possibly) comma-delimited set of declared variables
           for word in words:
+            if '[' in word and ']' in word:
+              dimension_bounds = []
+              head = '[' + head + ']'
+              word, _, tail = word.partition('[')
+
+              while True:
+                dimension, _, tail = tail.partition(']')
+                dimension_bounds.append(dimension)
+
+                if not tail:
+                  break
+                else:
+                  tail = tail[1:]
+                  
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
             if self._insert_one(word, head):
               pass
