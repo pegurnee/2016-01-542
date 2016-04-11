@@ -67,7 +67,7 @@ class TableManager:
         param_tokens = [ x.strip() for x in params.rstrip(' {)\n').split(',') if x ]
 
     #insert new labels into the table
-    if is_function or line.split()[0] in ['void', 'int', 'char' 'for'] or line.split()[0] in ck.varmods:
+    if is_function or line.split()[0] in ['void', 'int', 'char', 'for'] or line.split()[0] in ck.varmods:
       #handle pointer nonsense
       if '*' in line:
         line = line.replace('*', '')
@@ -128,7 +128,7 @@ class TableManager:
                   break
                 else:
                   tail = tail[1:]
-                  
+
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
             if self._insert_one(word, head):
               pass
