@@ -28,10 +28,14 @@ class TableManager:
     return True
 
   #returns True is a record was successfully inserted into the symbol table
-  def _insert_one(self, label_name, var_type, **adds):
+  def _insert_one(self, label_name, var_type, adds=None):
     label_key = (self.scope_names[-1], label_name)
+    _data = {
+      'var_type': var_type,
+      'line_count': self.line_counts[-1]
+    }
     if not self.table.lookup(label_key) and label_name not in ck.keywords:
-      self.table.insert(label_key, var_type, self.line_counts[-1])
+      self.table.insert(label_key, **_data)
       return True
 
   def parse_line(self, line):
@@ -115,6 +119,8 @@ class TableManager:
 
           #insert the (possibly) comma-delimited set of declared variables
           for word in words:
+
+            #handle the array of it all
             if '[' in word and ']' in word:
               dimension_bounds = []
               head = '[' + head + ']'
@@ -128,6 +134,10 @@ class TableManager:
                   break
                 else:
                   tail = tail[1:]
+
+
+            else:
+              pass
 
             word = ''.join(c for c in word if c not in set(string.punctuation)).split()[0]
             if self._insert_one(word, head):
