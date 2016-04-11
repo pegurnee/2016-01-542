@@ -1,5 +1,7 @@
 class SymbolTable:
-
+  """
+  This symbol table class was first seen in COSC 341. Nothing has been removed, only things have been added
+  """
   def __init__(self):
     self.scope_number = 0
     self._table = {}
@@ -17,7 +19,9 @@ class SymbolTable:
 
   def insert(self, location_and_name, var_type, line_count, num_parameters=0, parameter_name_and_type=[], return_type=None, number_of_dimensions=0, upper_bounds_of_dimensions=[] ):
     _data = [var_type, self.scope_number, line_count]
-    if var_type == 'function':
+    if '[' in var_type:
+      _data.extend([number_of_dimensions, upper_bounds_of_dimensions])
+    elif var_type == 'function':
       _data.extend([num_parameters, parameter_name_and_type, return_type])
 
     self._table[location_and_name] = tuple(_data)
