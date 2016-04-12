@@ -2,7 +2,11 @@ from symbol_table import SymbolTable
 import ckeywords as ck
 
 import string
+'''
+Symbol Table Manager for a subset of the C language.
 
+@author eddie gurnee
+'''
 class TableManager:
   def __init__(self, filename=None):
     super(TableManager, self).__init__()
@@ -10,6 +14,8 @@ class TableManager:
 
     self.line_counts = [0]
     self.scope_names = ['global']
+
+    self.numscopes = {}
 
     if filename:
       self.load_file(filename)
@@ -48,8 +54,14 @@ class TableManager:
     #check if scope should be initialized or finalized, the line variable is going to be screwed with
     if '{' in line:
       self.table.initialize_scope()
+      curr_scope = self.table.scope_number
       self.line_counts.append(0)
-      self.scope_names.append(str(self.table.scope_number))
+
+      if curr_scope in self.numscopes:
+        self.numscopes[curr_scope] += 1
+      else:
+        self.numscopes[curr_scope] = 0
+      self.scope_names.append('{}.{}'.format(curr_scope, self.numscopes[curr_scope]))
 
       should_initialize = True
     else:
